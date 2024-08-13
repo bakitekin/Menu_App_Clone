@@ -3,18 +3,18 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Header = ({ onCategorySelect }) => {
-  const [categories, setCategories] = useState([]);
-  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]); // Kategorileri saklamak için bir durum (state) oluşturur ve başlangıç değerini boş bir dizi olarak ayarlar.
+  const navigate = useNavigate(); // Sayfalar arasında gezinmek için navigate fonksiyonunu elde eder.
 
   useEffect(() => {
     axios
       .get("http://localhost:4000/categories")
-      .then((response) => setCategories(response.data))
+      .then((response) => setCategories(response.data)) // Gelen yanıtı kullanarak categories durumunu günceller.
       .catch((error) => console.error(error));
   }, []);
 
   const handleCategoryClick = (category) => {
-    onCategorySelect(category.name);
+    onCategorySelect(category.name); // Seçilen kategoriyi parent bileşene iletmek için onCategorySelect fonksiyonunu çağırır.
     navigate("/menu");
   };
 

@@ -2,24 +2,38 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Menu = () => {
+const Menu = ({ selectedCategory }) => {
+  // selectedCategory prop'unu alır
   const [menuItems, setMenuItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]); // Filtrelenmiş menü öğelerini saklamak için bir durum
+
   const navigate = useNavigate();
 
   useEffect(() => {
     axios("http://localhost:4000/menu")
-      .then((response) => setMenuItems(response.data))
+      .then((response) => {
+        setMenuItems(response.data);
+        setFilteredItems(response.data); // Başlangıçta tüm öğeleri göster
+      })
       .catch((error) => console.error(error));
   }, []);
 
-  const handleOrderClick = () => {
-    navigate("/menu");
-  };
+  useEffect(() => {
+    if (selectedCategory) {
+      // Eğer bir kategori seçildiyse menüyü filtrele
+      const filtered = menuItems.filter(
+        (item) => item.category === selectedCategory
+      );
+      setFilteredItems(filtered);
+    } else {
+      setFilteredItems(menuItems); // Eğer kategori seçili değilse tüm menüyü göster
+    }
+  }, [selectedCategory, menuItems]); // selectedCategory veya menuItems değiştiğinde bu effect çalışır
 
   return (
     <div className="bg-[#303132] w-full h-full min-h-screen p-4">
       <div className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 place-items-center">
-        {menuItems.map((item, index) => (
+        {filteredItems.map((item, index) => (
           <div
             key={index}
             className="bg-black text-yellow-500 rounded-lg shadow-2xl overflow-hidden w-full max-w-lg h-[500px] flex flex-col"
